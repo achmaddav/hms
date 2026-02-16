@@ -98,4 +98,92 @@ class Service extends Model
     {
         return $query->where('category', $category);
     }
+
+    // ============================================
+    // STATIC METHODS UNTUK STATISTIK
+    // ============================================
+
+    /**
+     * Get total services count by hotel
+     * 
+     * @param int $hotelId
+     * @return int
+     */
+    public static function countByHotel($hotelId)
+    {
+        return self::where('hotel_id', $hotelId)->count();
+    }
+
+    /**
+     * Get active services count by hotel
+     * 
+     * @param int $hotelId
+     * @return int
+     */
+    public static function countActiveByHotel($hotelId)
+    {
+        return self::where('hotel_id', $hotelId)
+                   ->where('is_active', true)
+                   ->count();
+    }
+
+    /**
+     * Get inactive services count by hotel
+     * 
+     * @param int $hotelId
+     * @return int
+     */
+    public static function countInactiveByHotel($hotelId)
+    {
+        return self::where('hotel_id', $hotelId)
+                   ->where('is_active', false)
+                   ->count();
+    }
+
+    /**
+     * Get services count by category and hotel
+     * 
+     * @param int $hotelId
+     * @param string $category
+     * @return int
+     */
+    public static function countByCategoryAndHotel($hotelId, $category)
+    {
+        return self::where('hotel_id', $hotelId)
+                   ->where('category', $category)
+                   ->count();
+    }
+
+    /**
+     * Get statistics summary by hotel
+     * 
+     * @param int $hotelId
+     * @return array
+     */
+    public static function getStatsByHotel($hotelId)
+    {
+        return [
+            'total' => self::countByHotel($hotelId),
+            'active' => self::countActiveByHotel($hotelId),
+            'inactive' => self::countInactiveByHotel($hotelId),
+        ];
+    }
+
+    /**
+     * Get services breakdown by category for a hotel
+     * 
+     * @param int $hotelId
+     * @return array
+     */
+    public static function getCategoryBreakdownByHotel($hotelId)
+    {
+        return [
+            'room_service' => self::countByCategoryAndHotel($hotelId, 'room_service'),
+            'spa' => self::countByCategoryAndHotel($hotelId, 'spa'),
+            'laundry' => self::countByCategoryAndHotel($hotelId, 'laundry'),
+            'restaurant' => self::countByCategoryAndHotel($hotelId, 'restaurant'),
+            'transportation' => self::countByCategoryAndHotel($hotelId, 'transportation'),
+            'other' => self::countByCategoryAndHotel($hotelId, 'other'),
+        ];
+    }
 }

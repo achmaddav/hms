@@ -11,7 +11,7 @@ class HotelScope
     /**
      * Handle an incoming request.
      * 
-     * Middleware ini otomatis set hotel_id pada session
+     * Middleware ini otomatis set hotel_id pada request
      * dan memastikan user hanya bisa akses data hotel mereka
      */
     public function handle(Request $request, Closure $next): Response
@@ -28,9 +28,15 @@ class HotelScope
             $selectedHotelId = session('selected_hotel_id');
             
             if ($selectedHotelId) {
+                // Super admin sedang manage hotel tertentu
                 $request->merge(['hotel_id' => $selectedHotelId]);
+                session(['current_hotel_id' => $selectedHotelId]);
+            } else {
+                // Super admin tidak memilih hotel = error
+                // Karena route admin.* harus punya hotel_id
+                return redirect()->route('super-admin.dashboard')
+                    ->with('error', 'Silakan pilih hotel yang ingin dikelola terlebih dahulu.');
             }
-            // Super admin bisa switch hotel, tidak enforce hotel_id
         } else {
             // User biasa hanya bisa akses hotel mereka
             if (!$user->hotel_id) {

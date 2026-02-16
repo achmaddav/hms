@@ -10,17 +10,22 @@ class RoleMiddleware
 {
     /**
      * Handle an incoming request.
-     *
+     * 
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  string  $roles  Comma-separated list of allowed roles (e.g., 'admin,super_admin')
      */
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        if (!$request->user()) {
+        if (!auth()->check()) {
             return redirect()->route('login');
         }
 
-        if ($request->user()->role !== $role) {
-            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        $user = auth()->user();
+
+        $allowedRoles = array_map('trim', $roles);
+
+        if (!in_array($user->role, $allowedRoles)) {
+            abort(403, 'Unauthorized action.');
         }
 
         return $next($request);

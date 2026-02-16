@@ -111,4 +111,138 @@ class Room extends Model
     {
         return $query->where('room_type', $type);
     }
+
+    // ============================================
+    // STATIC METHODS UNTUK STATISTIK
+    // ============================================
+
+    /**
+     * Get total rooms count by hotel
+     * 
+     * @param int $hotelId
+     * @return int
+     */
+    public static function countByHotel($hotelId)
+    {
+        return self::where('hotel_id', $hotelId)->count();
+    }
+
+    /**
+     * Get available rooms count by hotel
+     * 
+     * @param int $hotelId
+     * @return int
+     */
+    public static function countAvailableByHotel($hotelId)
+    {
+        return self::where('hotel_id', $hotelId)
+                   ->where('status', 'available')
+                   ->count();
+    }
+
+    /**
+     * Get occupied rooms count by hotel
+     * 
+     * @param int $hotelId
+     * @return int
+     */
+    public static function countOccupiedByHotel($hotelId)
+    {
+        return self::where('hotel_id', $hotelId)
+                   ->where('status', 'occupied')
+                   ->count();
+    }
+
+    /**
+     * Get maintenance rooms count by hotel
+     * 
+     * @param int $hotelId
+     * @return int
+     */
+    public static function countMaintenanceByHotel($hotelId)
+    {
+        return self::where('hotel_id', $hotelId)
+                   ->where('status', 'maintenance')
+                   ->count();
+    }
+
+    /**
+     * Get rooms count by status and hotel
+     * 
+     * @param int $hotelId
+     * @param string $status (available, occupied, maintenance)
+     * @return int
+     */
+    public static function countByStatusAndHotel($hotelId, $status)
+    {
+        return self::where('hotel_id', $hotelId)
+                   ->where('status', $status)
+                   ->count();
+    }
+
+    /**
+     * Get rooms count by type and hotel
+     * 
+     * @param int $hotelId
+     * @param string $roomType (standard, deluxe, suite, presidential)
+     * @return int
+     */
+    public static function countByTypeAndHotel($hotelId, $roomType)
+    {
+        return self::where('hotel_id', $hotelId)
+                   ->where('room_type', $roomType)
+                   ->count();
+    }
+
+    /**
+     * Get occupancy rate by hotel (percentage)
+     * 
+     * @param int $hotelId
+     * @return float
+     */
+    public static function getOccupancyRateByHotel($hotelId)
+    {
+        $total = self::countByHotel($hotelId);
+        
+        if ($total == 0) {
+            return 0;
+        }
+
+        $occupied = self::countOccupiedByHotel($hotelId);
+        
+        return round(($occupied / $total) * 100, 1);
+    }
+
+    /**
+     * Get statistics summary by hotel
+     * 
+     * @param int $hotelId
+     * @return array
+     */
+    public static function getStatsByHotel($hotelId)
+    {
+        return [
+            'total' => self::countByHotel($hotelId),
+            'available' => self::countAvailableByHotel($hotelId),
+            'occupied' => self::countOccupiedByHotel($hotelId),
+            'maintenance' => self::countMaintenanceByHotel($hotelId),
+            'occupancy_rate' => self::getOccupancyRateByHotel($hotelId),
+        ];
+    }
+
+    /**
+     * Get rooms breakdown by type for a hotel
+     * 
+     * @param int $hotelId
+     * @return array
+     */
+    public static function getTypeBreakdownByHotel($hotelId)
+    {
+        return [
+            'standard' => self::countByTypeAndHotel($hotelId, 'standard'),
+            'deluxe' => self::countByTypeAndHotel($hotelId, 'deluxe'),
+            'suite' => self::countByTypeAndHotel($hotelId, 'suite'),
+            'presidential' => self::countByTypeAndHotel($hotelId, 'presidential'),
+        ];
+    }
 }

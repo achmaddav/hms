@@ -69,23 +69,42 @@ class AuthController extends Controller
     /**
      * Redirect user based on their role
      */
+
     protected function redirectUserByRole($user)
     {
         switch ($user->role) {
             case 'super_admin':
-                return redirect()->intended(route('super-admin.dashboard'));
-                
+                return redirect()->route('super-admin.dashboard');
+                    
             case 'admin':
-                return redirect()->intended(route('admin.dashboard'));
-                
+                return redirect()->route('admin.dashboard');
+                    
             case 'receptionist':
-                return redirect()->intended(route('receptionist.dashboard'));
-                
+                return redirect()->route('receptionist.dashboard');
+                    
             case 'customer':
             default:
-                return redirect()->intended(route('dashboard'));
+                return redirect()->route('dashboard');
         }
     }
+
+    // protected function redirectUserByRole($user)
+    // {
+    //     switch ($user->role) {
+    //         case 'super_admin':
+    //             return redirect()->intended(route('super-admin.dashboard'));
+                
+    //         case 'admin':
+    //             return redirect()->intended(route('admin.dashboard'));
+                
+    //         case 'receptionist':
+    //             return redirect()->intended(route('receptionist.dashboard'));
+                
+    //         case 'customer':
+    //         default:
+    //             return redirect()->intended(route('dashboard'));
+    //     }
+    // }
 
     /**
      * Show registration form.

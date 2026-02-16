@@ -46,7 +46,7 @@ class RoomController extends Controller
      */
     public function create()
     {
-        return view('admin.rooms.create');
+        return view('admin.rooms.form');
     }
 
     /**
@@ -100,7 +100,7 @@ class RoomController extends Controller
     {
         $this->authorizeHotelAccess($request, $room);
         
-        return view('admin.rooms.edit', compact('room'));
+        return view('admin.rooms.form', compact('room'));
     }
 
     /**

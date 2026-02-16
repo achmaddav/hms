@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Admin Dashboard - Luxe Stay Hotel</title>
+    <title>Admin Dashboard - {{ $hotel->name }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -33,6 +33,34 @@
             font-family: 'Raleway', sans-serif;
             background: var(--bg);
             min-height: 100vh;
+        }
+
+        /* Alert Success */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 20px 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
         }
 
         /* Navbar */
@@ -70,6 +98,17 @@
 
         .brand .badge {
             background: var(--accent);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .brand .super-admin-badge {
+            background: linear-gradient(135deg, var(--danger), #ff6b6b);
             color: white;
             padding: 4px 12px;
             border-radius: 20px;
@@ -144,6 +183,25 @@
 
         .btn-logout:hover {
             background: var(--secondary);
+        }
+
+        .btn-back-super {
+            padding: 8px 20px;
+            background: linear-gradient(135deg, var(--danger), #ff6b6b);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-back-super:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
         }
 
         /* Main Layout */
@@ -228,6 +286,29 @@
 
         .page-header p {
             color: var(--text-light);
+            font-size: 14px;
+        }
+
+        /* Hotel Info Banner */
+        .hotel-info-banner {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .hotel-info-banner h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .hotel-info-banner p {
+            opacity: 0.8;
             font-size: 14px;
         }
 
@@ -381,7 +462,6 @@
             line-height: 1.5;
         }
 
-        /* Responsive */
         @media (max-width: 968px) {
             .main-layout {
                 flex-direction: column;
@@ -401,12 +481,44 @@
     </style>
 </head>
 <body>
+    @php
+        $user = auth()->user();
+        $hotelId = $hotel->id;
+        
+        // Get stats menggunakan static methods
+        $roomStats = \App\Models\Room::getStatsByHotel($hotelId);
+        $serviceStats = \App\Models\Service::getStatsByHotel($hotelId);
+    @endphp
+
+    <!-- Alert Messages -->
+    @if(session('success'))
+        <div class="alert alert-success">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-error">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            {{ session('error') }}
+        </div>
+    @endif
+
     <!-- Navbar -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="brand">
-                <h1>Luxe Stay</h1>
-                <span class="badge">Admin</span>
+                <h1>{{ $hotel->name }}</h1>
+                @if($user->isSuperAdmin())
+                    <span class="super-admin-badge">SUPER ADMIN MODE</span>
+                @else
+                    <span class="badge">Admin</span>
+                @endif
             </div>
             
             <ul class="nav-menu">
@@ -416,9 +528,18 @@
             </ul>
 
             <div class="user-section">
+                @if($user->isSuperAdmin())
+                    <form method="POST" action="{{ route('super-admin.hotels.clear-selection') }}" style="display: inline;">
+                        @csrf
+                        <button type="submit" class="btn-back-super">
+                            ← Back to Super Admin
+                        </button>
+                    </form>
+                @endif
+                
                 <div class="user-info">
-                    <div class="user-name">{{ Auth::user()->name }}</div>
-                    <div class="user-role">Administrator</div>
+                    <div class="user-name">{{ $user->name }}</div>
+                    <div class="user-role">{{ $user->getRoleLabel() }}</div>
                 </div>
                 <form method="POST" action="{{ route('logout') }}" style="display: inline;">
                     @csrf
@@ -493,12 +614,24 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <div class="page-header">
-                <h2>Dashboard Overview</h2>
-                <p>Selamat datang di panel admin Luxe Stay Hotel</p>
+            <!-- Hotel Info Banner -->
+            <div class="hotel-info-banner">
+                <div>
+                    <h3>{{ $hotel->name }}</h3>
+                    <p>📍 {{ $hotel->city }}, {{ $hotel->country }}</p>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 32px; font-weight: 700;">{{ $roomStats['occupancy_rate'] }}%</div>
+                    <div style="opacity: 0.8; font-size: 13px;">Occupancy Rate</div>
+                </div>
             </div>
 
-            <!-- Stats Grid -->
+            <div class="page-header">
+                <h2>Dashboard Overview</h2>
+                <p>Statistik dan data hotel Anda</p>
+            </div>
+
+            <!-- Stats Grid dengan Data Ter-filter -->
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-header">
@@ -515,7 +648,7 @@
                         </div>
                     </div>
                     <div class="stat-label">Total Kamar</div>
-                    <div class="stat-value">{{ \App\Models\Room::count() }}</div>
+                    <div class="stat-value">{{ $roomStats['total'] }}</div>
                 </div>
 
                 <div class="stat-card">
@@ -533,7 +666,7 @@
                         </div>
                     </div>
                     <div class="stat-label">Kamar Tersedia</div>
-                    <div class="stat-value">{{ \App\Models\Room::where('status', 'available')->count() }}</div>
+                    <div class="stat-value">{{ $roomStats['available'] }}</div>
                 </div>
 
                 <div class="stat-card">
@@ -551,7 +684,7 @@
                         </div>
                     </div>
                     <div class="stat-label">Kamar Terisi</div>
-                    <div class="stat-value">{{ \App\Models\Room::where('status', 'occupied')->count() }}</div>
+                    <div class="stat-value">{{ $roomStats['occupied'] }}</div>
                 </div>
 
                 <div class="stat-card">
@@ -569,7 +702,7 @@
                         </div>
                     </div>
                     <div class="stat-label">Total Layanan</div>
-                    <div class="stat-value">{{ \App\Models\Service::count() }}</div>
+                    <div class="stat-value">{{ $serviceStats['total'] }}</div>
                 </div>
             </div>
 

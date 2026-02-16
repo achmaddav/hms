@@ -139,6 +139,7 @@ class HotelController extends Controller
 
     /**
      * Switch active hotel for super admin
+     * Super admin akan "masuk" ke hotel tersebut dan bisa manage semua data hotel
      */
     public function switchHotel(Request $request)
     {
@@ -146,19 +147,32 @@ class HotelController extends Controller
         
         $hotel = Hotel::findOrFail($hotelId);
         
-        // Set selected hotel to session
-        session(['selected_hotel_id' => $hotelId]);
+        // Validasi hotel harus aktif
+        if ($hotel->status !== 'active') {
+            return redirect()->back()
+                ->with('error', "Hotel {$hotel->name} sedang tidak aktif. Aktifkan hotel terlebih dahulu.");
+        }
         
-        return redirect()->back()->with('success', "Switched to {$hotel->name}");
+        // Set selected hotel to session
+        session([
+            'selected_hotel_id' => $hotelId,
+            'selected_hotel_name' => $hotel->name,
+        ]);
+        
+        // IMPORTANT: Redirect ke admin dashboard, bukan back
+        // Super admin akan "bertindak" sebagai admin hotel tersebut
+        return redirect()->route('admin.dashboard')
+            ->with('success', "Sekarang Anda mengelola: {$hotel->name}");
     }
 
     /**
-     * Clear hotel selection (view all hotels data)
+     * Clear hotel selection (kembali ke mode super admin)
      */
     public function clearHotelSelection()
     {
-        session()->forget('selected_hotel_id');
+        session()->forget(['selected_hotel_id', 'selected_hotel_name']);
         
-        return redirect()->back()->with('success', 'Viewing all hotels data');
+        return redirect()->route('super-admin.dashboard')
+            ->with('success', 'Kembali ke mode Super Admin');
     }
 }

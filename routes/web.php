@@ -47,7 +47,7 @@ Route::post('/logout', [AuthController::class, 'logout'])
 Route::middleware(['auth', 'role:super_admin'])->prefix('super-admin')->name('super-admin.')->group(function () {
     // Dashboard Super Admin
     Route::get('/dashboard', function () {
-        return view('super-admin.super-admin-dashboard');
+        return view('super-admin.dashboard');
     })->name('dashboard');
     
     // Hotel Management
@@ -67,12 +67,23 @@ Route::middleware(['auth', 'role:super_admin'])->prefix('super-admin')->name('su
 | HOTEL ADMIN ROUTES
 | - Manage hotel mereka sendiri
 | - Data ter-scope otomatis ke hotel mereka
+| - SUPER ADMIN juga bisa akses route ini saat switch hotel
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'role:admin', 'hotel.scope'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:super_admin,admin', 'hotel.scope'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard Admin Hotel
     Route::get('/dashboard', function () {
-        $hotel = auth()->user()->hotel;
+        $user = auth()->user();
+        
+        // Super admin: ambil hotel dari session
+        if ($user->isSuperAdmin()) {
+            $hotelId = session('selected_hotel_id');
+            $hotel = \App\Models\Hotel::findOrFail($hotelId);
+        } else {
+            // Admin biasa: ambil dari user
+            $hotel = $user->hotel;
+        }
+        
         return view('admin.dashboard', compact('hotel'));
     })->name('dashboard');
     
