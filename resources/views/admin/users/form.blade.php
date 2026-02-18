@@ -262,7 +262,12 @@
                 <h3 class="section-title">Keamanan</h3>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>Password {{ isset($user) ? '' : '<span class="required">*</span>' }}</label>
+                        <label>
+                            Password
+                            @if(!isset($user))
+                                <span class="required">*</span>
+                            @endif
+                        </label>
                         <input type="password" name="password" placeholder="{{ isset($user) ? 'Kosongkan jika tidak ingin ubah' : 'Minimal 8 karakter' }}" {{ isset($user) ? '' : 'required' }}>
                         @error('password')
                             <span class="error-message">{{ $message }}</span>
@@ -273,7 +278,12 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Konfirmasi Password {{ isset($user) ? '' : '<span class="required">*</span>' }}</label>
+                        <label>
+                            Konfirmasi Password 
+                            @if(!isset($user))
+                                <span class="required">*</span>
+                            @endif
+                        </label>
                         <input type="password" name="password_confirmation" placeholder="Ketik ulang password" {{ isset($user) ? '' : 'required' }}>
                     </div>
                 </div>
