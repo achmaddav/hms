@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Admin\RoomController;
 use App\Http\Controllers\Admin\ServiceController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\SuperAdmin\HotelController;
 use Illuminate\Support\Facades\Route;
 
@@ -87,6 +88,9 @@ Route::middleware(['auth', 'role:super_admin,admin', 'hotel.scope'])->prefix('ad
         return view('admin.dashboard', compact('hotel'));
     })->name('dashboard');
     
+    // User Management 
+    Route::resource('users', UserController::class);
+
     // Master Kamar (otomatis ter-filter by hotel_id)
     Route::resource('rooms', RoomController::class);
     Route::patch('/rooms/{room}/status', [RoomController::class, 'updateStatus'])->name('rooms.update-status');
