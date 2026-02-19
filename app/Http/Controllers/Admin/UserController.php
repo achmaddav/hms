@@ -20,6 +20,7 @@ class UserController extends Controller
         $hotelId = $this->getCurrentHotelId($request);
         
         $query = User::query();
+        $query->where('id', '!=', $user->id); // Exclude self
         
         // Super admin bisa lihat semua user atau filter by hotel
         if ($user->isSuperAdmin()) {
