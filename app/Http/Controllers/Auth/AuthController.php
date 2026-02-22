@@ -74,17 +74,21 @@ class AuthController extends Controller
     {
         switch ($user->role) {
             case 'super_admin':
-                return redirect()->route('super-admin.dashboard');
-                    
+                return redirect()->intended(route('super-admin.dashboard'));
+            
             case 'admin':
-                return redirect()->route('admin.dashboard');
-                    
+                return redirect()->intended(route('admin.dashboard'));
+            
             case 'receptionist':
-                return redirect()->route('receptionist.dashboard');
-                    
+                return redirect()->intended(route('receptionist.dashboard')); 
+            
             case 'customer':
+                return redirect()->intended(route('dashboard'));
+            
             default:
-                return redirect()->route('dashboard');
+                Auth::logout();
+                return redirect()->route('login')
+                    ->with('error', 'Role tidak dikenali.');
         }
     }
 

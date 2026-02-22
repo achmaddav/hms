@@ -245,4 +245,16 @@ class Room extends Model
             'presidential' => self::countByTypeAndHotel($hotelId, 'presidential'),
         ];
     }
+
+    public function checkIns()
+    {
+        return $this->hasMany(CheckIn::class);
+    }
+
+    public function currentGuest()
+    {
+        return $this->hasOne(CheckIn::class)
+            ->where('status', 'checked_in')
+            ->latest();
+    }
 }

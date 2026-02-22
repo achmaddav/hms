@@ -122,4 +122,24 @@ class User extends Authenticatable
 
         return $labels[$this->role] ?? $this->role;
     }
+
+    public function checkedInGuests()
+    {
+        return $this->hasMany(CheckIn::class, 'checked_in_by');
+    }
+
+    public function checkedOutGuests()
+    {
+        return $this->hasMany(CheckIn::class, 'checked_out_by');
+    }
+
+    public function processedPayments()
+    {
+        return $this->hasMany(Payment::class, 'processed_by');
+    }
+
+    public function addedCharges()
+    {
+        return $this->hasMany(AdditionalCharge::class, 'added_by');
+    }
 }

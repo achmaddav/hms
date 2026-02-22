@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\RoomController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\SuperAdmin\HotelController;
+use App\Http\Controllers\Receptionist\CheckInController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -114,17 +115,17 @@ Route::middleware(['auth', 'role:super_admin,admin', 'hotel.scope'])->prefix('ad
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:receptionist', 'hotel.scope'])->prefix('receptionist')->name('receptionist.')->group(function () {
+    // Dashboard Receptionist
     Route::get('/dashboard', function () {
         $hotel = auth()->user()->hotel;
         return view('receptionist.dashboard', compact('hotel'));
     })->name('dashboard');
     
-    // Check-in / Check-out
-    // Route::get('/check-in', [CheckInController::class, 'index'])->name('check-in.index');
-    // Route::post('/check-in', [CheckInController::class, 'store'])->name('check-in.store');
-    
-    // View Bookings (read-only atau limited)
-    // Route::get('/bookings', [BookingController::class, 'index'])->name('bookings.index');
+    // Check-in Management 
+    Route::resource('checkins', CheckInController::class)->except(['edit', 'update', 'destroy']);
+    Route::post('/checkins/{checkin}/payment', [CheckInController::class, 'addPayment'])->name('checkins.add-payment');
+    Route::post('/checkins/{checkin}/charge', [CheckInController::class, 'addCharge'])->name('checkins.add-charge');
+    Route::post('/checkins/{checkin}/checkout', [CheckInController::class, 'checkout'])->name('checkins.checkout');
 });
 
 /*
