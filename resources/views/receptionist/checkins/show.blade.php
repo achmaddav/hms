@@ -557,7 +557,7 @@
                 @csrf
                 <div class="form-group">
                     <label>Jumlah Bayar <span style="color: var(--danger);">*</span></label>
-                    <input type="number" name="amount" required min="0" max="{{ $checkin->remaining_amount }}" step="1000">
+                    <input type="number" name="amount" required min="0" max="{{ $checkin->remaining_amount }}">
                     <small style="color: var(--text-light);">Maksimal: Rp {{ number_format($checkin->remaining_amount, 0, ',', '.') }}</small>
                 </div>
                 <div class="form-group">

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\SuperAdmin\HotelController;
 use App\Http\Controllers\Receptionist\CheckInController;
+use App\Http\Controllers\Receptionist\ReceptionistRoomController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -126,6 +127,12 @@ Route::middleware(['auth', 'role:receptionist', 'hotel.scope'])->prefix('recepti
     Route::post('/checkins/{checkin}/payment', [CheckInController::class, 'addPayment'])->name('checkins.add-payment');
     Route::post('/checkins/{checkin}/charge', [CheckInController::class, 'addCharge'])->name('checkins.add-charge');
     Route::post('/checkins/{checkin}/checkout', [CheckInController::class, 'checkout'])->name('checkins.checkout');
+
+    // Room Management 
+    Route::get('/rooms', [ReceptionistRoomController::class, 'index'])->name('rooms.index');
+    Route::get('/rooms/{room}', [ReceptionistRoomController::class, 'show'])->name('rooms.show');
+    Route::patch('/rooms/{room}/status', [ReceptionistRoomController::class, 'updateStatus'])->name('rooms.update-status');
+    Route::patch('/rooms/{room}/quick-status', [ReceptionistRoomController::class, 'quickStatusUpdate'])->name('rooms.quick-status');
 });
 
 /*

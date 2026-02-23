@@ -21,6 +21,7 @@ class Room extends Model
         'status',
         'floor',
         'size',
+        'notes'
     ];
 
     protected $casts = [

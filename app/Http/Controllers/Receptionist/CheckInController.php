@@ -95,7 +95,7 @@ class CheckInController extends Controller
         $roomPrice = $room->price_per_night;
         $durationDays = $validated['duration_days'];
         $roomTotal = $roomPrice * $durationDays;
-        $tax = $roomTotal * 0.11; // 11% tax
+        $tax = $roomTotal * 0.10; // 11% tax
         $totalAmount = $roomTotal + $tax;
         
         // Create check-in
