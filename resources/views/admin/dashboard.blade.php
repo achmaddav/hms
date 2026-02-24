@@ -589,7 +589,7 @@
                 </ul>
             </div>
 
-            <div class="sidebar-section">
+            <!-- <div class="sidebar-section">
                 <div class="sidebar-title">Operations</div>
                 <ul class="sidebar-menu">
                     <li>
@@ -609,7 +609,7 @@
                         </a>
                     </li>
                 </ul>
-            </div>
+            </div> -->
 
             <div class="sidebar-section">
                 <div class="sidebar-title">User Management</div>
