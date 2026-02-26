@@ -1,6 +1,6 @@
 ## Installation
 
-git clone https://github.com/achmaddav/hms.git br>
+git clone https://github.com/achmaddav/hms.git <br>
 cd hms <br>
 composer install <br>
 cp .env.example .env <br>
