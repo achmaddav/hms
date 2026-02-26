@@ -32,7 +32,7 @@ class HotelController extends Controller
 
         $hotels = $query->orderBy('name')->paginate(10);
 
-        return view('super-admin.hotels.index', compact('hotels'));
+        return view('super-admin.hotels.hotels-index', compact('hotels'));
     }
 
     /**
@@ -40,7 +40,7 @@ class HotelController extends Controller
      */
     public function create()
     {
-        return view('super-admin.hotels.create');
+        return view('super-admin.hotels.hotels-form');
     }
 
     /**
@@ -68,7 +68,7 @@ class HotelController extends Controller
 
         Hotel::create($validated);
 
-        return redirect()->route('super-admin.hotels.index')
+        return redirect()->route('super-admin.hotels.hotels-index')
             ->with('success', 'Hotel berhasil ditambahkan!');
     }
 
@@ -85,7 +85,7 @@ class HotelController extends Controller
      */
     public function edit(Hotel $hotel)
     {
-        return view('super-admin.hotels.edit', compact('hotel'));
+        return view('super-admin.hotels.hotels-form', compact('hotel'));
     }
 
     /**
