@@ -57,6 +57,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Check if user is manager admin
+     */
+    public function isManager()
+    {
+        return $this->role === 'manager';
+    }
+
+    /**
      * Check if user is receptionist
      */
     public function isReceptionist()
@@ -113,14 +121,13 @@ class User extends Authenticatable
      */
     public function getRoleLabel()
     {
-        $labels = [
+        return [
             'super_admin' => 'Super Admin',
             'admin' => 'Hotel Admin',
+            'manager' => 'Manager',
             'receptionist' => 'Receptionist',
             'customer' => 'Customer',
-        ];
-
-        return $labels[$this->role] ?? $this->role;
+        ][$this->role] ?? ucfirst($this->role);
     }
 
     public function checkedInGuests()

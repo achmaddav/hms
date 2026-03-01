@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\SuperAdmin\HotelController;
 use App\Http\Controllers\Receptionist\CheckInController;
 use App\Http\Controllers\Receptionist\ReceptionistRoomController;
+use App\Http\Controllers\Report\ReportController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -106,6 +107,26 @@ Route::middleware(['auth', 'role:super_admin,admin', 'hotel.scope'])->prefix('ad
     
     // Staff Management (staff untuk hotel ini saja)
     // Route::resource('staff', StaffController::class);
+});
+
+/*
+|--------------------------------------------------------------------------
+| MANAGER ROUTES
+| - View reports only
+| - Revenue & occupancy analytics
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', 'role:manager', 'hotel.scope'])->prefix('manager')->name('manager.')->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [ReportController::class, 'index'])->name('dashboard');
+    
+    // Reports
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/daily-revenue', [ReportController::class, 'dailyRevenue'])->name('daily-revenue');
+        Route::get('/monthly-revenue', [ReportController::class, 'monthlyRevenue'])->name('monthly-revenue');
+        Route::get('/occupancy', [ReportController::class, 'occupancy'])->name('occupancy');
+        Route::get('/revenue-by-type', [ReportController::class, 'revenueByRoomType'])->name('revenue-by-type');
+    });
 });
 
 /*

@@ -78,6 +78,9 @@ class AuthController extends Controller
             
             case 'admin':
                 return redirect()->intended(route('admin.dashboard'));
+
+            case 'manager':
+                return redirect()->intended(route('manager.dashboard'));
             
             case 'receptionist':
                 return redirect()->intended(route('receptionist.dashboard')); 
@@ -91,24 +94,6 @@ class AuthController extends Controller
                     ->with('error', 'Role tidak dikenali.');
         }
     }
-
-    // protected function redirectUserByRole($user)
-    // {
-    //     switch ($user->role) {
-    //         case 'super_admin':
-    //             return redirect()->intended(route('super-admin.dashboard'));
-                
-    //         case 'admin':
-    //             return redirect()->intended(route('admin.dashboard'));
-                
-    //         case 'receptionist':
-    //             return redirect()->intended(route('receptionist.dashboard'));
-                
-    //         case 'customer':
-    //         default:
-    //             return redirect()->intended(route('dashboard'));
-    //     }
-    // }
 
     /**
      * Show registration form.

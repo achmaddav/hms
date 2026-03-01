@@ -68,7 +68,7 @@ class HotelController extends Controller
 
         Hotel::create($validated);
 
-        return redirect()->route('super-admin.hotels.hotels-index')
+        return redirect()->route('super-admin.hotels.index')
             ->with('success', 'Hotel berhasil ditambahkan!');
     }
 
