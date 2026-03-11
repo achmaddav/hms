@@ -200,8 +200,8 @@ class ReportController extends Controller
         $revenueByType = CheckIn::forHotel($hotelId)
             ->join('rooms', 'check_ins.room_id', '=', 'rooms.id')
             ->whereBetween('check_ins.check_in_date', [$startDate, $endDate])
-            ->selectRaw('rooms.type, SUM(check_ins.total_amount) as revenue, COUNT(*) as bookings, SUM(check_ins.total_nights) as total_nights')
-            ->groupBy('rooms.type')
+            ->selectRaw('rooms.room_type, SUM(check_ins.total_amount) as revenue, COUNT(*) as bookings, SUM(check_ins.total_nights) as total_nights')
+            ->groupBy('rooms.room_type')
             ->orderBy('revenue', 'desc')
             ->get();
         
@@ -212,6 +212,198 @@ class ReportController extends Controller
             'totalRevenue',
             'month'
         ));
+    }
+
+    public function performance(Request $request)
+    {
+        $hotelId = auth()->user()->hotel_id;
+        $period = $request->input('period', 'month'); // today, week, month, year
+        
+        // Determine date range based on period
+        switch ($period) {
+            case 'today':
+                $startDate = today();
+                $endDate = today();
+                $previousStart = today()->subDay();
+                $previousEnd = today()->subDay();
+                break;
+            case 'week':
+                $startDate = now()->subDays(6)->startOfDay();
+                $endDate = now()->endOfDay();
+                $previousStart = now()->subDays(13)->startOfDay();
+                $previousEnd = now()->subDays(7)->endOfDay();
+                break;
+            case 'year':
+                $startDate = now()->startOfYear();
+                $endDate = now()->endOfDay();
+                $previousStart = now()->subYear()->startOfYear();
+                $previousEnd = now()->subYear()->endOfDay();
+                break;
+            default: // month (30 days)
+                $startDate = now()->subDays(29)->startOfDay();
+                $endDate = now()->endOfDay();
+                $previousStart = now()->subDays(59)->startOfDay();
+                $previousEnd = now()->subDays(30)->endOfDay();
+        }
+        
+        // Get current period data
+        $currentData = CheckIn::forHotel($hotelId)
+            ->whereBetween('check_in_date', [$startDate, $endDate])
+            ->selectRaw('
+                SUM(total_amount) as total_revenue,
+                COUNT(*) as total_bookings,
+                SUM(total_nights) as total_nights,
+                AVG(total_nights) as avg_los
+            ')
+            ->first();
+        
+        // Get previous period data for comparison
+        $previousData = CheckIn::forHotel($hotelId)
+            ->whereBetween('check_in_date', [$previousStart, $previousEnd])
+            ->selectRaw('
+                SUM(total_amount) as total_revenue,
+                COUNT(*) as total_bookings
+            ')
+            ->first();
+        
+        // Calculate metrics
+        $totalRooms = Room::forHotel($hotelId)->count();
+        $daysInPeriod = $startDate->diffInDays($endDate) + 1;
+        
+        $metrics = [
+            'total_revenue' => $currentData->total_revenue ?? 0,
+            'total_bookings' => $currentData->total_bookings ?? 0,
+            'total_room_nights' => $currentData->total_nights ?? 0,
+            'avg_los' => $currentData->avg_los ?? 0,
+            'avg_daily_revenue' => $daysInPeriod > 0 ? ($currentData->total_revenue ?? 0) / $daysInPeriod : 0,
+            'avg_booking_value' => $currentData->total_bookings > 0 ? ($currentData->total_revenue ?? 0) / $currentData->total_bookings : 0,
+            'avg_occupancy' => $totalRooms > 0 && $daysInPeriod > 0 ? (($currentData->total_nights ?? 0) / ($totalRooms * $daysInPeriod)) * 100 : 0,
+            'revpar' => $totalRooms > 0 && $daysInPeriod > 0 ? ($currentData->total_revenue ?? 0) / ($totalRooms * $daysInPeriod) : 0,
+        ];
+        
+        // Calculate growth rates
+        if ($previousData && $previousData->total_revenue > 0) {
+            $metrics['revenue_growth'] = (($currentData->total_revenue - $previousData->total_revenue) / $previousData->total_revenue) * 100;
+        }
+        
+        if ($previousData && $previousData->total_bookings > 0) {
+            $previousOccupancy = ($previousData->total_bookings / ($totalRooms * $daysInPeriod)) * 100;
+            $metrics['occupancy_growth'] = $metrics['avg_occupancy'] - $previousOccupancy;
+        }
+        
+        // Revenue by Room Type - FIX: Explicit table name for hotel_id
+        $revenueByTypeData = CheckIn::query()
+            ->join('rooms', 'check_ins.room_id', '=', 'rooms.id')
+            ->where('check_ins.hotel_id', $hotelId) // ← FIX: Specify check_ins.hotel_id
+            ->whereBetween('check_ins.check_in_date', [$startDate, $endDate])
+            ->selectRaw('rooms.room_type, SUM(check_ins.total_amount) as revenue, COUNT(*) as bookings')
+            ->groupBy('rooms.room_type')
+            ->orderBy('revenue', 'desc')
+            ->get();
+        
+        $totalRevenue = $revenueByTypeData->sum('revenue');
+        $revenueByType = $revenueByTypeData->map(function($item) use ($totalRevenue) {
+            return [
+                'type' => $item->room_type,
+                'revenue' => $item->revenue,
+                'bookings' => $item->bookings,
+                'percentage' => $totalRevenue > 0 ? ($item->revenue / $totalRevenue) * 100 : 0,
+            ];
+        });
+        
+        // Top Performing Rooms - FIX: Explicit table name for hotel_id
+        $topRooms = CheckIn::query()
+            ->join('rooms', 'check_ins.room_id', '=', 'rooms.id')
+            ->where('check_ins.hotel_id', $hotelId) // ← FIX: Specify check_ins.hotel_id
+            ->whereBetween('check_ins.check_in_date', [$startDate, $endDate])
+            ->selectRaw('
+                rooms.id,
+                rooms.room_number,
+                rooms.room_type,
+                SUM(check_ins.total_amount) as revenue,
+                COUNT(*) as bookings,
+                SUM(check_ins.total_nights) as nights
+            ')
+            ->groupBy('rooms.id', 'rooms.room_number', 'rooms.room_type')
+            ->orderBy('revenue', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function($item) use ($daysInPeriod) {
+                return [
+                    'room_number' => $item->room_number,
+                    'type' => $item->room_type,
+                    'revenue' => $item->revenue,
+                    'bookings' => $item->bookings,
+                    'occupancy_rate' => $daysInPeriod > 0 ? ($item->nights / $daysInPeriod) * 100 : 0,
+                ];
+            });
+        
+        // Trend Data for Charts
+        $trendData = $this->getTrendData($hotelId, $startDate, $endDate, $period);
+        
+        return view('reports.performance-summary', compact(
+            'period',
+            'metrics',
+            'revenueByType',
+            'topRooms',
+            'trendData'
+        ));
+    }
+
+    /**
+     * Get trend data for charts
+     */
+    private function getTrendData($hotelId, $startDate, $endDate, $period)
+    {
+        $labels = [];
+        $revenue = [];
+        $occupancy = [];
+        
+        $totalRooms = Room::forHotel($hotelId)->count();
+        
+        if ($period == 'today') {
+            // Hourly data for today (simplified to morning/afternoon/evening)
+            $labels = ['Morning', 'Afternoon', 'Evening'];
+            $revenue = [0, 0, 0];
+            $occupancy = [0, 0, 0];
+        } elseif ($period == 'week' || $period == 'month') {
+            // Daily data
+            $currentDate = $startDate->copy();
+            while ($currentDate <= $endDate) {
+                $labels[] = $currentDate->format('d M');
+                
+                $dayData = CheckIn::forHotel($hotelId)
+                    ->whereDate('check_in_date', $currentDate)
+                    ->selectRaw('SUM(total_amount) as revenue, SUM(total_nights) as nights')
+                    ->first();
+                
+                $revenue[] = $dayData->revenue ?? 0;
+                $occupancy[] = $totalRooms > 0 ? (($dayData->nights ?? 0) / $totalRooms) * 100 : 0;
+                
+                $currentDate->addDay();
+            }
+        } else {
+            // Monthly data for year
+            for ($m = 1; $m <= 12; $m++) {
+                $labels[] = \Carbon\Carbon::create()->month($m)->format('M');
+                
+                $monthData = CheckIn::forHotel($hotelId)
+                    ->whereYear('check_in_date', $startDate->year)
+                    ->whereMonth('check_in_date', $m)
+                    ->selectRaw('SUM(total_amount) as revenue, SUM(total_nights) as nights')
+                    ->first();
+                
+                $daysInMonth = \Carbon\Carbon::create($startDate->year, $m)->daysInMonth;
+                $revenue[] = $monthData->revenue ?? 0;
+                $occupancy[] = $totalRooms > 0 && $daysInMonth > 0 ? (($monthData->nights ?? 0) / ($totalRooms * $daysInMonth)) * 100 : 0;
+            }
+        }
+        
+        return [
+            'labels' => $labels,
+            'revenue' => $revenue,
+            'occupancy' => $occupancy,
+        ];
     }
     
     /**

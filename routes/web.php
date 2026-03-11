@@ -126,6 +126,7 @@ Route::middleware(['auth', 'role:manager', 'hotel.scope'])->prefix('manager')->n
         Route::get('/monthly-revenue', [ReportController::class, 'monthlyRevenue'])->name('monthly-revenue');
         Route::get('/occupancy', [ReportController::class, 'occupancy'])->name('occupancy');
         Route::get('/revenue-by-type', [ReportController::class, 'revenueByRoomType'])->name('revenue-by-type');
+        Route::get('/performance', [ReportController::class, 'performance'])->name('performance');
     });
 });
 
