@@ -416,6 +416,21 @@
             </ul>
         </div>
 
+        <!-- ⭐ NEW SECTION - Payments -->
+        <div class="sidebar-section">
+            <div class="sidebar-title">Payments</div>
+            <ul class="sidebar-menu">
+                <li>
+                    <a href="{{ route('receptionist.utility-payments.index') }}">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                        </svg>
+                        Utility Payments
+                    </a>
+                </li>
+            </ul>
+        </div>
+
         <div class="sidebar-section user-section">
             <div class="user-info">
                 <div class="user-avatar">{{ substr(auth()->user()->name, 0, 1) }}</div>
@@ -503,14 +518,14 @@
                 <div class="action-description">Lihat semua tamu yang sedang menginap</div>
             </a>
 
-            <a href="{{ route('receptionist.checkins.index') }}?payment_status=unpaid" class="action-card">
+            <a href="{{ route('receptionist.utility-payments.index') }}" class="action-card">
                 <div class="action-icon">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
                     </svg>
                 </div>
-                <div class="action-title">Belum Bayar</div>
-                <div class="action-description">Tamu yang belum melunasi</div>
+                <div class="action-title">Utility Payments</div>
+                <div class="action-description">Kelola pembayaran utilities</div>
             </a>
         </div>
 

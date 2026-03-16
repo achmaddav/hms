@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Receptionist;
+namespace App\Http\Controllers\Payment;
 
 use App\Http\Controllers\Controller;
 use App\Models\UtilityPayment;
@@ -44,7 +44,7 @@ class UtilityPaymentController extends Controller
         
         $payments = $query->orderBy('created_at', 'desc')->paginate(15);
         
-        return view('payment.utility-payments.index', compact('payments'));
+        return view('payment.utility-payments-index', compact('payments'));
     }
     
     /**
@@ -56,7 +56,7 @@ class UtilityPaymentController extends Controller
         
         $rooms = Room::forHotel($hotelId)->orderBy('room_number')->get();
         
-        return view('payment.utility-payments.create', compact('rooms'));
+        return view('payment.utility-create', compact('rooms'));
     }
     
     /**
@@ -105,7 +105,7 @@ class UtilityPaymentController extends Controller
         
         $payment->save();
         
-        return redirect()->route('payment.utility-payments.show', $payment)
+        return redirect()->route('receptionist.utility-payments.show', $payment)
             ->with('success', 'Pembayaran utilitas berhasil dicatat! Nomor: ' . $payment->payment_number);
     }
     
@@ -118,7 +118,7 @@ class UtilityPaymentController extends Controller
         
         $utilityPayment->load(['room', 'recordedBy', 'paidBy']);
         
-        return view('payment.utility-payments.show', compact('utilityPayment'));
+        return view('payment.utility-show', compact('utilityPayment'));
     }
     
     /**
@@ -145,7 +145,7 @@ class UtilityPaymentController extends Controller
             $utilityPayment->save();
         }
         
-        return redirect()->route('payment.utility-payments.show', $utilityPayment)
+        return redirect()->route('receptionist.utility-payments.show', $utilityPayment)
             ->with('success', 'Pembayaran berhasil ditandai sebagai lunas!');
     }
     
