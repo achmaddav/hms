@@ -129,7 +129,7 @@ class DailyFinancialSheet implements FromCollection, WithTitle, WithStyles, With
                 // SECTION 1: PEMASUKAN (REVENUE) - GREEN THEME
                 // ============================================================
                 
-                $sheet->setCellValue("A{$currentRow}", '💰 PEMASUKAN (REVENUE)');
+                $sheet->setCellValue("A{$currentRow}", 'PEMASUKAN (REVENUE)');
                 $sheet->mergeCells("A{$currentRow}:K{$currentRow}");
                 $sheet->getRowDimension($currentRow)->setRowHeight(28);
                 $sheet->getStyle("A{$currentRow}:K{$currentRow}")->applyFromArray([
@@ -324,7 +324,7 @@ class DailyFinancialSheet implements FromCollection, WithTitle, WithStyles, With
                 
                 // GRAND TOTAL PEMASUKAN
                 $totalRevenue = $totalRoomRevenue + $totalServicesRevenue;
-                $sheet->setCellValue("I{$currentRow}", '🔹 TOTAL PEMASUKAN HARI INI');
+                $sheet->setCellValue("I{$currentRow}", 'TOTAL PEMASUKAN HARI INI');
                 $sheet->setCellValue("J{$currentRow}", $totalRevenue);
                 $sheet->getRowDimension($currentRow)->setRowHeight(28);
                 $sheet->getStyle("I{$currentRow}:J{$currentRow}")->applyFromArray([
@@ -342,7 +342,7 @@ class DailyFinancialSheet implements FromCollection, WithTitle, WithStyles, With
                 // SECTION 2: PENGELUARAN (EXPENSE) - RED THEME
                 // ============================================================
                 
-                $sheet->setCellValue("A{$currentRow}", '💳 PENGELUARAN (EXPENSE)');
+                $sheet->setCellValue("A{$currentRow}", 'PENGELUARAN (EXPENSE)');
                 $sheet->mergeCells("A{$currentRow}:K{$currentRow}");
                 $sheet->getRowDimension($currentRow)->setRowHeight(28);
                 $sheet->getStyle("A{$currentRow}:K{$currentRow}")->applyFromArray([
@@ -543,7 +543,7 @@ class DailyFinancialSheet implements FromCollection, WithTitle, WithStyles, With
                 
                 // GRAND TOTAL PENGELUARAN
                 $totalExpense = $totalUtilityExpense + $totalSalaryExpense;
-                $sheet->setCellValue("I{$currentRow}", '🔹 TOTAL PENGELUARAN HARI INI');
+                $sheet->setCellValue("I{$currentRow}", 'TOTAL PENGELUARAN HARI INI');
                 $sheet->setCellValue("J{$currentRow}", $totalExpense);
                 $sheet->getRowDimension($currentRow)->setRowHeight(28);
                 $sheet->getStyle("I{$currentRow}:J{$currentRow}")->applyFromArray([
@@ -563,7 +563,7 @@ class DailyFinancialSheet implements FromCollection, WithTitle, WithStyles, With
                 
                 $netProfit = $totalRevenue - $totalExpense;
                 
-                $sheet->setCellValue("A{$currentRow}", '📊 RINGKASAN HARIAN');
+                $sheet->setCellValue("A{$currentRow}", 'RINGKASAN HARIAN');
                 $sheet->mergeCells("A{$currentRow}:K{$currentRow}");
                 $sheet->getRowDimension($currentRow)->setRowHeight(28);
                 $sheet->getStyle("A{$currentRow}:K{$currentRow}")->applyFromArray([
@@ -591,7 +591,7 @@ class DailyFinancialSheet implements FromCollection, WithTitle, WithStyles, With
                 $currentRow++;
                 
                 // Revenue Row
-                $sheet->setCellValue("A{$currentRow}", '✅ Total Pemasukan');
+                $sheet->setCellValue("A{$currentRow}", 'Total Pemasukan');
                 $sheet->setCellValue("B{$currentRow}", $totalRevenue);
                 $sheet->setCellValue("C{$currentRow}", 'Revenue dari kamar & layanan tambahan');
                 $sheet->mergeCells("C{$currentRow}:E{$currentRow}");
@@ -603,7 +603,7 @@ class DailyFinancialSheet implements FromCollection, WithTitle, WithStyles, With
                 $currentRow++;
                 
                 // Expense Row
-                $sheet->setCellValue("A{$currentRow}", '❌ Total Pengeluaran');
+                $sheet->setCellValue("A{$currentRow}", 'Total Pengeluaran');
                 $sheet->setCellValue("B{$currentRow}", $totalExpense);
                 $sheet->setCellValue("C{$currentRow}", 'Biaya operasional & gaji karyawan');
                 $sheet->mergeCells("C{$currentRow}:E{$currentRow}");
@@ -617,7 +617,7 @@ class DailyFinancialSheet implements FromCollection, WithTitle, WithStyles, With
                 $currentRow++; // Empty row
                 
                 // Profit/Loss Row
-                $profitLabel = $netProfit >= 0 ? '💰 LABA BERSIH' : '⚠️ RUGI BERSIH';
+                $profitLabel = $netProfit >= 0 ? 'LABA BERSIH' : 'RUGI BERSIH';
                 $profitColor = $netProfit >= 0 ? '10b981' : 'ef4444';
                 $profitNote = $netProfit >= 0 ? 'Profit hari ini - Kondisi keuangan sehat!' : 'Loss hari ini - Perlu evaluasi pengeluaran';
                 
@@ -638,7 +638,7 @@ class DailyFinancialSheet implements FromCollection, WithTitle, WithStyles, With
                 $currentRow++; // Empty row
                 
                 // Additional Metrics
-                $sheet->setCellValue("A{$currentRow}", '📈 Profit Margin');
+                $sheet->setCellValue("A{$currentRow}", 'Profit Margin');
                 $sheet->setCellValue("B{$currentRow}", $totalRevenue > 0 ? number_format(($netProfit / $totalRevenue) * 100, 2) . '%' : '0%');
                 $sheet->setCellValue("C{$currentRow}", 'Persentase keuntungan dari total pemasukan');
                 $sheet->mergeCells("C{$currentRow}:E{$currentRow}");
