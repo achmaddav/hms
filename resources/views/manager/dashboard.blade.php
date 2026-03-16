@@ -279,10 +279,18 @@
             </ul>
         </div>
 
-        <!-- ⭐ NEW SECTION - Payments -->
+        <!-- ⭐ UPDATED - Financial Section -->
         <div class="sidebar-section">
-            <div class="sidebar-title">Payments</div>
+            <div class="sidebar-title">Financial</div>
             <ul class="sidebar-menu">
+                <li>
+                    <a href="{{ route('manager.reports.financial.index') }}">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                        Financial Reports
+                    </a>
+                </li>
                 <li>
                     <a href="{{ route('manager.salary-payments.index') }}">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -399,6 +407,17 @@
 
         <!-- Report Cards -->
         <div class="reports-grid">
+            <!-- ⭐ NEW - Financial Reports Card -->
+            <a href="{{ route('manager.reports.financial.index') }}" class="report-card">
+                <div class="report-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <div class="report-title">Laporan Keuangan</div>
+                <div class="report-description">Analisis pemasukan, pengeluaran, dan laba/rugi hotel dengan export Excel</div>
+            </a>
+
             <a href="{{ route('manager.reports.daily-revenue') }}" class="report-card">
                 <div class="report-icon">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -413,7 +432,7 @@
                 <div class="report-icon">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
-                    </svg>
+                </svg>
                 </div>
                 <div class="report-title">Laporan Revenue Bulanan</div>
                 <div class="report-description">Analisis revenue per bulan dan perbandingan antar periode</div>
@@ -433,13 +452,12 @@
                 <div class="report-icon">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
+                </svg>
                 </div>
                 <div class="report-title">Performance Summary</div>
                 <div class="report-description">Ringkasan performa hotel secara keseluruhan</div>
             </a>
 
-            <!-- ⭐ NEW - Salary Payments Card -->
             <a href="{{ route('manager.salary-payments.index') }}" class="report-card">
                 <div class="report-icon">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">

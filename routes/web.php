@@ -9,6 +9,7 @@ use App\Http\Controllers\Payment\UtilityPaymentController;
 use App\Http\Controllers\SuperAdmin\HotelController;
 use App\Http\Controllers\Receptionist\CheckInController;
 use App\Http\Controllers\Receptionist\ReceptionistRoomController;
+use App\Http\Controllers\Report\FinancialReportController;
 use App\Http\Controllers\Report\ReportController;
 use Illuminate\Support\Facades\Route;
 
@@ -129,6 +130,19 @@ Route::middleware(['auth', 'role:manager', 'hotel.scope'])->prefix('manager')->n
         Route::get('/occupancy', [ReportController::class, 'occupancy'])->name('occupancy');
         Route::get('/revenue-by-type', [ReportController::class, 'revenueByRoomType'])->name('revenue-by-type');
         Route::get('/performance', [ReportController::class, 'performance'])->name('performance');
+
+        // Financial Reports
+        Route::get('/financial', [FinancialReportController::class, 'index'])->name('financial.index');
+        Route::get('/room-revenue', [FinancialReportController::class, 'roomRevenue'])->name('room-revenue');
+        Route::get('/room-expense', [FinancialReportController::class, 'roomExpense'])->name('room-expense');
+        Route::get('/financial-summary', [FinancialReportController::class, 'financialSummary'])->name('financial-summary');
+        Route::get('/salary-report', [FinancialReportController::class, 'salaryReport'])->name('salary-report');
+        
+        // Excel Exports
+        Route::get('/export/room-revenue', [FinancialReportController::class, 'exportRoomRevenue'])->name('export.room-revenue');
+        Route::get('/export/room-expense', [FinancialReportController::class, 'exportRoomExpense'])->name('export.room-expense');
+        Route::get('/export/financial-summary', [FinancialReportController::class, 'exportFinancialSummary'])->name('export.financial-summary');
+        Route::get('/export/salary-report', [FinancialReportController::class, 'exportSalaryReport'])->name('export.salary-report');
     });
 
     Route::resource('salary-payments', SalaryPaymentController::class)->except(['edit', 'update']);
