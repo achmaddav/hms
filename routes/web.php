@@ -131,14 +131,9 @@ Route::middleware(['auth', 'role:manager', 'hotel.scope'])->prefix('manager')->n
         Route::get('/performance', [ReportController::class, 'performance'])->name('performance');
     });
 
-    Route::resource('salary-payments', SalaryPaymentController::class)
-        ->except(['edit', 'update']);
-    Route::post('salary-payments/{salaryPayment}/approve', 
-        [SalaryPaymentController::class, 'approve'])
-        ->name('salary-payments.approve');
-    Route::post('salary-payments/{salaryPayment}/cancel', 
-        [SalaryPaymentController::class, 'cancel'])
-        ->name('salary-payments.cancel');
+    Route::resource('salary-payments', SalaryPaymentController::class)->except(['edit', 'update']);
+    Route::post('salary-payments/{salaryPayment}/approve', [SalaryPaymentController::class, 'approve'])->name('salary-payments.approve');
+    Route::post('salary-payments/{salaryPayment}/cancel', [SalaryPaymentController::class, 'cancel'])->name('salary-payments.cancel');
 });
 
 /*
@@ -167,9 +162,7 @@ Route::middleware(['auth', 'role:receptionist', 'hotel.scope'])->prefix('recepti
     Route::patch('/rooms/{room}/status', [ReceptionistRoomController::class, 'updateStatus'])->name('rooms.update-status');
     Route::patch('/rooms/{room}/quick-status', [ReceptionistRoomController::class, 'quickStatusUpdate'])->name('rooms.quick-status');
 
-    Route::resource('utility-payments', UtilityPaymentController::class)
-        ->parameters(['utility-payments' => 'utilityPayment'])
-        ->except(['edit', 'update']);
+    Route::resource('utility-payments', UtilityPaymentController::class)->except(['edit', 'update']);
     Route::post('utility-payments/{utilityPayment}/mark-paid', [UtilityPaymentController::class, 'markAsPaid'])->name('utility-payments.mark-paid');
 });
 

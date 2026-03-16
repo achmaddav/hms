@@ -47,7 +47,7 @@ class SalaryPaymentController extends Controller
             ->orderBy('name')
             ->get();
         
-        return view('manager.salary-payments.index', compact('payments', 'employees'));
+        return view('payment.salary-index', compact('payments', 'employees'));
     }
     
     /**
@@ -62,7 +62,7 @@ class SalaryPaymentController extends Controller
             ->orderBy('name')
             ->get();
         
-        return view('manager.salary-payments.create', compact('employees'));
+        return view('payment.salary-create', compact('employees'));
     }
     
     /**
@@ -140,7 +140,7 @@ class SalaryPaymentController extends Controller
         
         $salaryPayment->load(['employee', 'processedBy', 'approvedBy']);
         
-        return view('manager.salary-payments.show', compact('salaryPayment'));
+        return view('payment.salary-show', compact('salaryPayment'));
     }
     
     /**

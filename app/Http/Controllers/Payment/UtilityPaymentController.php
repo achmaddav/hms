@@ -163,7 +163,7 @@ class UtilityPaymentController extends Controller
         
         $utilityPayment->delete();
         
-        return redirect()->route('payment.utility-payments.index')
+        return redirect()->route('receptionist.utility-payments.index')
             ->with('success', 'Pembayaran berhasil dihapus.');
     }
     
