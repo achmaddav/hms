@@ -315,6 +315,7 @@
                         <select name="role" class="form-control">
                             <option value="">Semua Role</option>
                             <option value="admin" {{ request('role') == 'admin' ? 'selected' : '' }}>Admin</option>
+                            <option value="manager" {{ request('role') == 'manager' ? 'selected' : '' }}>Manager</option>
                             <option value="receptionist" {{ request('role') == 'receptionist' ? 'selected' : '' }}>Receptionist</option>
                             <option value="customer" {{ request('role') == 'customer' ? 'selected' : '' }}>Customer</option>
                         </select>
@@ -353,6 +354,7 @@
                                 @php
                                     $badgeClass = [
                                         'admin' => 'badge-danger',
+                                        'manager' => 'badge-info',
                                         'receptionist' => 'badge-warning',
                                         'customer' => 'badge-success',
                                     ][$user->role] ?? 'badge-primary';

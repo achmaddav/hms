@@ -254,6 +254,7 @@ class UserController extends Controller
             // Super admin bisa create semua role kecuali super_admin
             return [
                 'admin' => 'Hotel Admin',
+                'manager' => 'Manager',
                 'receptionist' => 'Receptionist',
                 'customer' => 'Customer',
             ];
