@@ -262,6 +262,7 @@ class UserController extends Controller
             // Admin hotel hanya bisa create receptionist dan customer
             return [
                 'receptionist' => 'Receptionist',
+                'manager' => 'Manager',
                 'customer' => 'Customer',
             ];
         }
